@@ -1,0 +1,4 @@
+repository "Just_Bike@juya10211@cloud"
+  path "/"
+    br "/main"
+    co "/main"
