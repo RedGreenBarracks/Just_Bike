@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MoveObject : MonoBehaviour
 {
-    public float maxSpeed = 10.0f;
+    public float maxSpeed = 100.0f;
     public float acceleration = 2.0f;
     public float rotateSpeed = 50.0f;
     private float currentSpeed = 0.0f;
