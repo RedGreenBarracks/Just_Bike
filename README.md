@@ -19,3 +19,8 @@
 
 ### 제작자
 [@SAgiKPJH](https://github.com/SAgiKPJH)
+
+---
+
+# 사전 준비
+### Unity 프로젝트 참조추가 방법 (https://github.com/RedGreenBarracks/Just_Bike/issues/5)
