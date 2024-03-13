@@ -1,7 +1,9 @@
 using UnityEngine;
+using Unity.Business;
 
 public class MoveObject : MonoBehaviour
 {
+    Class1 a; // 추가한 클래스
     public float maxSpeed = 100.0f;
     public float acceleration = 2.0f;
     public float rotateSpeed = 50.0f;
