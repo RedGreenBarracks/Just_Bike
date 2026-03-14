@@ -3,29 +3,21 @@ using UnityEngine.UI;
 
 /// <summary>
 /// Atomic Design - Atom 레벨 버튼.
-/// Inspector에서 색상(Green/Blue/Red)을 선택하면 자동 적용됩니다.
+/// ColorManager를 Inspector에서 연결하면 Editor/런타임 모두 색상 적용.
 /// </summary>
 [RequireComponent(typeof(Button))]
 [RequireComponent(typeof(Image))]
 public class AtomButton : MonoBehaviour
 {
-    [Header("설정")]
+    [Header("색상")]
+    [SerializeField] private ColorManager colorManager;
     [SerializeField] private ButtonColor buttonColor = ButtonColor.Green;
+
+    [Header("텍스트")]
     [SerializeField] private string labelText = "Button";
     [SerializeField] private int fontSize = 32;
 
-    private Button button;
-    private Image background;
-    private Text label;
-
-    public Button Button => button;
-
-    void Awake()
-    {
-        button = GetComponent<Button>();
-        background = GetComponent<Image>();
-        label = GetComponentInChildren<Text>();
-    }
+    public Button Button => GetComponent<Button>();
 
     void OnValidate()
     {
@@ -47,17 +39,22 @@ public class AtomButton : MonoBehaviour
 
     void ApplyColor()
     {
+        if (colorManager == null) return;
+
         var bg = GetComponent<Image>();
         var btn = GetComponent<Button>();
         if (bg == null || btn == null) return;
 
-        bg.color = buttonColor.ToColor();
+        var data = colorManager.GetColorData(buttonColor);
+        if (data == null) return;
+
+        bg.color = data.Normal;
 
         var colors = btn.colors;
-        colors.normalColor = buttonColor.ToColor();
-        colors.highlightedColor = buttonColor.ToHoverColor();
-        colors.pressedColor = buttonColor.ToPressedColor();
-        colors.selectedColor = buttonColor.ToColor();
+        colors.normalColor = data.Normal;
+        colors.highlightedColor = data.Hover;
+        colors.pressedColor = data.Pressed;
+        colors.selectedColor = data.Normal;
         colors.fadeDuration = 0.1f;
         btn.colors = colors;
     }

@@ -5,7 +5,7 @@ using UnityEditor;
 
 /// <summary>
 /// [Just Bike > Setup Start UI] 메뉴로 Canvas + UIManager를 생성합니다.
-/// 시작 버튼은 AtomButton(Green)으로 구성됩니다.
+/// AtomButton Prefab이 있으면 Prefab Instance로 StartButton을 배치합니다.
 /// </summary>
 public class SetupStartUI
 {
@@ -65,8 +65,22 @@ public class SetupStartUI
         titleText.color = Color.white;
         titleText.fontStyle = FontStyle.Bold;
 
-        // ── Start Button (AtomButton) ──
-        var btnObj = AtomButtonEditor.Create("StartButton", panelObj.transform, ButtonColor.Green, "게임 시작");
+        // ── Start Button (AtomButton Prefab Instance 또는 일반 오브젝트) ──
+        GameObject btnObj;
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/UI/Prefabs/Atoms/AtomButton.prefab");
+        if (prefab != null)
+        {
+            btnObj = (GameObject)PrefabUtility.InstantiatePrefab(prefab, panelObj.transform);
+            btnObj.name = "StartButton";
+            var atom = btnObj.GetComponent<AtomButton>();
+            atom.SetColor(ButtonColor.Green);
+            atom.SetLabel("게임 시작");
+        }
+        else
+        {
+            btnObj = AtomButtonEditor.CreateRaw("StartButton", panelObj.transform, ButtonColor.Green, "게임 시작");
+        }
+
         var btnRect = btnObj.GetComponent<RectTransform>();
         btnRect.anchorMin = new Vector2(0.5f, 0.4f);
         btnRect.anchorMax = new Vector2(0.5f, 0.4f);
