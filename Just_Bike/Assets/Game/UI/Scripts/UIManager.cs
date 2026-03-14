@@ -1,77 +1,52 @@
 using UnityEngine;
+using UnityEngine.UI;
 using VContainer;
 
+/// <summary>
+/// Canvas 오브젝트에 직접 붙여서 사용합니다.
+/// Editor 메뉴 [Just Bike > Setup Start UI]로 자동 생성 가능.
+/// </summary>
+[RequireComponent(typeof(Canvas))]
+[RequireComponent(typeof(CanvasScaler))]
+[RequireComponent(typeof(GraphicRaycaster))]
 public class UIManager : MonoBehaviour
 {
     [Inject] private GameManager gameManager;
 
-    private bool showMenu = true;
-    private GUIStyle titleStyle;
-    private GUIStyle buttonStyle;
-    private bool stylesInitialized;
+    [Header("UI 참조")]
+    [SerializeField] private GameObject menuPanel;
+    [SerializeField] private AtomButton startButton;
 
     void Start()
     {
         gameManager.OnGameStateChanged += OnGameStateChanged;
+
+        if (startButton != null)
+            startButton.Button.onClick.AddListener(OnStartClicked);
     }
 
     void OnDestroy()
     {
         if (gameManager != null)
             gameManager.OnGameStateChanged -= OnGameStateChanged;
+
+        if (startButton != null)
+            startButton.Button.onClick.RemoveListener(OnStartClicked);
+    }
+
+    void OnStartClicked()
+    {
+        gameManager.StartGame();
     }
 
     void OnGameStateChanged(GameManager.GameState state)
     {
-        showMenu = state == GameManager.GameState.Menu;
-        Cursor.lockState = showMenu ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = showMenu;
-    }
+        bool isMenu = state == GameManager.GameState.Menu;
 
-    void InitStyles()
-    {
-        titleStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 64,
-            alignment = TextAnchor.MiddleCenter,
-            fontStyle = FontStyle.Bold
-        };
-        titleStyle.normal.textColor = Color.white;
+        if (menuPanel != null)
+            menuPanel.SetActive(isMenu);
 
-        buttonStyle = new GUIStyle(GUI.skin.button)
-        {
-            fontSize = 28,
-            fontStyle = FontStyle.Bold
-        };
-
-        stylesInitialized = true;
-    }
-
-    void OnGUI()
-    {
-        if (!showMenu) return;
-        if (!stylesInitialized) InitStyles();
-
-        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height),
-            Texture2D.whiteTexture, ScaleMode.StretchToFill, false,
-            0, new Color(0.1f, 0.1f, 0.15f, 0.95f), 0, 0);
-
-        float titleW = 600, titleH = 100;
-        Rect titleRect = new Rect(
-            (Screen.width - titleW) / 2f,
-            Screen.height * 0.3f,
-            titleW, titleH);
-        GUI.Label(titleRect, "Just Bike", titleStyle);
-
-        float btnW = 250, btnH = 60;
-        Rect btnRect = new Rect(
-            (Screen.width - btnW) / 2f,
-            Screen.height * 0.55f,
-            btnW, btnH);
-
-        if (GUI.Button(btnRect, "게임 시작", buttonStyle))
-        {
-            gameManager.StartGame();
-        }
+        Cursor.lockState = isMenu ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = isMenu;
     }
 }

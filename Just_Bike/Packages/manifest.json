@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.unity.ugui": "2.0.0",
     "jp.hadashikick.vcontainer": "1.16.7",
     "com.unity.multiplayer.center": "1.0.1",
     "com.unity.modules.accessibility": "1.0.0",
